@@ -74,7 +74,7 @@ teardown() {
 }
 
 skip() {
-  BATS_TEST_SKIPPED=${1:-1}
+  BATS_TEST_SKIPPED="$1"
   BATS_TEST_COMPLETED=1
   exit 0
 }
@@ -257,12 +257,10 @@ bats_exit_trap() {
   local skipped
   trap - err exit
 
-  if [ -n "$BATS_TEST_SKIPPED" ]; then
-    skipped=" # skip"
-    if [ "1" != "$BATS_TEST_SKIPPED" ]; then
-      skipped+=" $BATS_TEST_SKIPPED"
-    fi
+  if [ skipme = "${BATS_TEST_SKIPPED+skipme}" ]; then
+    skipped=" # skip $BATS_TEST_SKIPPED"
   fi
+  unset BATS_TEST_SKIPPED
 
   if [ -z "$BATS_TEST_COMPLETED" ] || [ -z "$BATS_TEARDOWN_COMPLETED" ]; then
     echo "not ok $BATS_TEST_NUMBER $BATS_TEST_DESCRIPTION" >&3
